@@ -1,6 +1,5 @@
 import streamlit as st
 import pandera.pandas as pa
-from io import BytesIO
 from files import files
 from uploader import upload_file
 from utils import read_file
@@ -49,7 +48,7 @@ if uploaded_file is not None:
     if valid:
         if st.button("Enviar"):
             with st.spinner("Enviando arquivo..."):
-                upload_file(files[file_type]["file_name"], BytesIO(df[required_cols].to_parquet()), uploaded_file.name)
+                upload_file(files[file_type]["file_name"], df[required_cols])
                 st.success("Arquivo enviado com sucesso")
 
 
