@@ -1,33 +1,102 @@
-# Carregador de Arquivos
+# Spreadsheet File Uploader
 
-Este projeto foi desenvolvido para prevenir problemas de qualidade de dados em dashboards e pipelines que dependem de arquivos carregados por analistas de negócios. Ele utiliza Streamlit para oferecer uma interface de usuário intuitiva para upload de arquivos e automaticamente valida se os arquivos carregados estão em conformidade com os formatos esperados pelos sistemas downstream. Também utiliza Databricks para armazenar os arquivos em um volume.
+This project was developed to prevent data quality issues in dashboards and pipelines that depend on files uploaded by business analysts. It uses Streamlit to provide an intuitive user interface for file uploads and automatically validates whether uploaded files comply with the formats expected by downstream systems. It also uses Databricks to store the files in a volume.
 
-## Configuração do Ambiente
+## About This Project
 
-1. Criar um ambiente virtual: `python3 -m venv .venv`
-2. Ativar o ambiente virtual: `source .venv/bin/activate`
-3. Instalar as dependências: `pip install -r requirements.txt`
+This is an English translation and enhanced version of Pedro Ramos's excellent [uploader_carga_fria](https://github.com/Databricks-BR/uploader_carga_fria) repository. The original project provided a solid foundation for validating and uploading cold load files to Databricks Unity Catalog volumes.
 
-## Estrutura do Projeto e Variáveis / Parâmetros para Editar
+**Enhancements in this version:**
+- Complete English translation (code, comments, documentation, and example files)
+- Refactored backend with improved schema configuration structure
+- Enhanced UI with better user guidance and data preview
+- Simplified codebase with consolidated backend logic
+- Improved documentation and extensibility
+
+This project follows patterns from the [Databricks Apps Cookbook](https://apps-cookbook.dev/docs/streamlit/volumes/volumes_upload) for working with Unity Catalog volumes in Streamlit applications.
+
+## Environment Setup
+
+1. Create a virtual environment: `python3 -m venv .venv`
+2. Activate the virtual environment: `source .venv/bin/activate`
+3. Install dependencies: `pip install -r requirements.txt`
+
+## Project Structure and Variables / Parameters to Edit
 
 ### app.py
 
-Este arquivo é responsável por construir a interface do usuário que permite o upload de arquivos.
+Streamlit application that builds the user interface for file uploads and validation.
 
-### files.py
+### backend.py
 
-Define a estrutura dos arquivos de carga fria (schema, nome do volume, etc.).
+Contains all backend logic including:
+- **SCHEMAS dictionary**: Configure file schemas with display names, descriptions, and validation rules
+- **read_file()**: Reads uploaded CSV or Excel files into DataFrames
+- **upload_file()**: Uploads validated files to Databricks volumes
 
-1. files (linha 3): Configurar schemas e nomes dos arquivos que chegam via carga fria.
+To add a new file schema, add an entry to the `SCHEMAS` dictionary with:
+- `display_name`: User-friendly name shown in the UI
+- `description`: Brief description of what the file contains
+- `schema`: Pandera schema defining the expected columns and validation rules
+- `file_name`: Base name for the saved file
 
-### uploader.py
+**Configuration needed:**
+1. **WorkspaceClient()**: For local testing, configure the workspace profile:
+   - `databricks auth login` => Registers the profile on your machine
+   - `WorkspaceClient(profile="<profile name>")` => Connects using your credentials
+   - When deployed on Databricks, no configuration needed (inherits user permissions)
 
-Responsável por mover arquivos que estão em conformidade com a estrutura esperada para um Volume no workspace do Databricks.
+2. **catalog, schema, and volume_name**: Must point to your Databricks volume
 
-1. **WorkspaceClient() (linha 6)**: Para testar localmente, você precisa configurar o perfil do workspace a ser usado.
+## Running the Application
 
-    a. `databricks auth login` => Registra o perfil na sua máquina.
+To run the application locally:
 
-    b. `WorkspaceClient(profile="<nome do perfil>")` => Permite conectar ao workspace usando suas credenciais. Quando o app é implantado no Databricks, isso não é necessário. O app herda as autorizações do usuário.
+```bash
+streamlit run app.py
+```
 
-2. **catalog, schema, e volume_name (linhas 8, 9 e 10)**: Devem apontar para o volume que foi criado no workspace.
+## Features
+
+- **File Upload Interface**: Simple and intuitive file upload interface built with Streamlit
+- **Schema Validation**: Automatically validates uploaded files against predefined schemas
+- **Error Reporting**: Provides clear, actionable error messages when validation fails
+- **Databricks Integration**: Seamlessly uploads validated files to Databricks volumes
+- **Multiple File Formats**: Supports CSV and Excel (.xlsx) files
+
+## How It Works
+
+1. User selects a file type/schema from the dropdown menu
+2. User uploads a file (CSV or Excel)
+3. The application validates the file structure against the expected schema
+4. If validation passes, a preview of the first 5 rows is displayed
+5. User can submit the validated file to be uploaded to Databricks
+6. If validation fails, user receives detailed feedback about what needs to be corrected
+
+## Deploying to Databricks
+
+This application can be deployed as a Databricks App. The `app.yaml` configuration file is provided for deployment.
+
+### Required Permissions
+
+Your app service principal needs the following permissions:
+- `USE CATALOG` on the catalog of the volume
+- `USE SCHEMA` on the schema of the volume
+- `READ VOLUME` and `WRITE VOLUME` on the volume
+
+See the [Databricks documentation on privileges for volume operations](https://apps-cookbook.dev/docs/streamlit/volumes/volumes_upload#permissions) for more information.
+
+## References
+
+- [Databricks Apps Cookbook - Upload a file](https://apps-cookbook.dev/docs/streamlit/volumes/volumes_upload)
+- [Original project by Pedro Ramos](https://github.com/Databricks-BR/uploader_carga_fria)
+- [Pandera - Data Validation Library](https://pandera.readthedocs.io/)
+- [Databricks SDK for Python](https://docs.databricks.com/dev-tools/sdk-python.html)
+
+## Contributing
+
+Feel free to open issues or submit pull requests with improvements!
+
+## Credits
+
+Original concept and implementation by [Pedro Ramos](https://github.com/Databricks-BR/uploader_carga_fria). This version includes translations, refactoring, and UI enhancements.
