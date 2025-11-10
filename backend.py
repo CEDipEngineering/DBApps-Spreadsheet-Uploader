@@ -35,9 +35,9 @@ def upload_file(file_name: str, file_data: pd.DataFrame):
     w = WorkspaceClient()
     
     # Configure the target Databricks volume
-    catalog = ""
-    schema = ""
-    volume_name = ""
+    catalog = "cedip"
+    schema = "default"
+    volume_name = "example_volume"
     
     file_name = f"{file_name}_{datetime.now().strftime('%Y-%m-%d')}.parquet"
     volume_file_path = f"/Volumes/{catalog}/{schema}/{volume_name}/{file_name}"
