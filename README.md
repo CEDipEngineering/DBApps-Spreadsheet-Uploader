@@ -2,6 +2,8 @@
 
 This project was developed to prevent data quality issues in dashboards and pipelines that depend on files uploaded by business analysts. It uses Streamlit to provide an intuitive user interface for file uploads and automatically validates whether uploaded files comply with the formats expected by downstream systems. It also uses Databricks to store the files in a volume.
 
+![Demo](img/demo.gif)
+
 ## About This Project
 
 This is an English translation and enhanced version of Pedro Ramos's excellent [uploader_carga_fria](https://github.com/Databricks-BR/uploader_carga_fria) repository. The original project provided a solid foundation for validating and uploading cold load files to Databricks Unity Catalog volumes.
